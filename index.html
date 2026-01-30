@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommendation</title>
+</head>
+<body>
+<h2>🎬 Movie Recommendation System</h2>
+
+<input type="number" id="userId" placeholder="Enter user id">
+<button onclick="recommend()">Recommend</button>
+
+<ul id="results"></ul>
+
+<script>
+async function recommend() {
+    const userId = document.getElementById("userId").value;
+    const res = await fetch("http://LOAD_BALANCER_IP/recommend", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({user_id: userId})
+    });
+    const data = await res.json();
+    document.getElementById("results").innerHTML =
+        data.recommendations.map(m => `<li>${m}</li>`).join("");
+}
+</script>
+
+</body>
+</html>
