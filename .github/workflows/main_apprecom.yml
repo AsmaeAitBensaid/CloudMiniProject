@@ -13,6 +13,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write    # indispensable pour Azure login via OIDC
+      contents: read
     steps:
       # 1️⃣ Récupérer le repo
       - uses: actions/checkout@v3
@@ -45,3 +48,4 @@ jobs:
 
 
           
+
