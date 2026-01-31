@@ -1,14 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Film Recommendation</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+h2 {
+    color: #5a4fcf;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #5a4fcf;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+li {
+    background: #f3f3f3;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 5px;
+}
+</style>
+</head>
+
 <body>
-<h2>Film Recommendation</h2>
 
-<input type="number" id="user_id" placeholder="User ID">
-<button onclick="getRecs()">Get Recommendations</button>
-
-<ul id="result"></ul>
+<div class="container">
+    <h2>🎬 Film Recommendation</h2>
+    <input type="number" id="user_id" placeholder="User ID">
+    <br>
+    <button onclick="getRecs()">Get Recommendations</button>
+    <ul id="result"></ul>
+</div>
 
 <script src="script.js"></script>
 </body>
 </html>
+
 
