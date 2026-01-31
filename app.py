@@ -11,8 +11,9 @@ def home():
 def recommend():
     user_id = int(request.json.get("user_id"))
     data = pd.read_csv("data.csv")
-    recs = data[data["user_id"] == user_id].head(5).to_dict(orient="records")
-    return jsonify(recs)
+    recs = data[data["user_id"] == user_id]["movie_title"].head(5).tolist()
+    return jsonify({"recommendations": recs})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
