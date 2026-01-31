@@ -1,81 +1,49 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Film Recommendation</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    height: 100vh;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    width: 350px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-h2 {
-    color: #5a4fcf;
-}
-
-input {
-    width: 80%;
-    padding: 10px;
-    margin: 15px 0;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-button {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #5a4fcf;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-}
-
-li {
-    background: #f3f3f3;
-    margin: 8px 0;
-    padding: 8px;
-    border-radius: 5px;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Movie Recommender</title>
+    <style>
+        body { font-family: Arial; background-color: #f0f8ff; text-align: center; }
+        h1 { color: #003366; }
+        input { padding: 5px; font-size: 16px; }
+        button { padding: 5px 10px; font-size: 16px; background-color: #007ACC; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #005A99; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; color: #003366; }
+    </style>
 </head>
-
 <body>
+    <h1>Movie Recommender</h1>
+    <input type="number" id="user_id" placeholder="Enter User ID">
+    <button onclick="getRecommendations()">Get Recommendations</button>
+    <h2>Recommendations:</h2>
+    <ul id="recommendations"></ul>
 
-<div class="container">
-    <h2>🎬 Film Recommendation</h2>
-    <input type="number" id="user_id" placeholder="User ID">
-    <br>
-    <button onclick="getRecs()">Get Recommendations</button>
-    <ul id="result"></ul>
-</div>
-
-<script src="script.js"></script>
+    <script>
+        async function getRecommendations() {
+            const userId = document.getElementById("user_id").value;
+            const response = await fetch("/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: userId })
+            });
+            const data = await response.json();
+            const ul = document.getElementById("recommendations");
+            ul.innerHTML = "";
+            if (data.recommendations.length === 0) {
+                ul.innerHTML = "<li>No recommendations found</li>";
+            } else {
+                data.recommendations.forEach(title => {
+                    const li = document.createElement("li");
+                    li.textContent = title;
+                    ul.appendChild(li);
+                });
+            }
+        }
+    </script>
 </body>
 </html>
+
 
 
