@@ -1,39 +1,37 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import pickle
+import os
 
 app = Flask(__name__)
 
-# Charger le modèle au démarrage
-with open('model.pkl', 'rb') as f:
+# Charger le modèle
+with open('recommandation_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 @app.route('/')
 def home():
-    return "API de recommandation de films"
+    return render_template('index.html')
 
-@app.route('/recommend', methods=['POST'])
+@app.route('/api/recommend', methods=['POST'])
 def recommend():
     try:
         data = request.get_json()
-        # Adaptez selon votre modèle
-        user_id = data.get('user_id')
-        # Utilisez votre modèle pour générer des recommandations
-        recommendations = model.predict(user_id)  # Exemple
-        return jsonify({'recommendations': recommendations.tolist()})
+        user_input = data.get('input')
+        
+        if user_input is None:
+            return jsonify({'error': 'Input manquant'}), 400
+        
+        recommendations = model.predict([user_input])
+        
+        return jsonify({
+            'recommendations': recommendations.tolist() if hasattr(recommendations, 'tolist') else list(recommendations)
+        })
+        
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
-```
-
-**`requirements.txt` :**
-```
-Flask==3.0.0
-pandas
-numpy
-scikit-learn
-gunicorn
+    app.run()
 
 
 
