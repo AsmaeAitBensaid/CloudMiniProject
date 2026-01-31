@@ -4,41 +4,36 @@ import pickle
 
 app = Flask(__name__)
 
-# Charger le CSV avec les titres
-data = pd.read_csv("data.csv")
-
-# Charger le modèle entraîné
+# Charger le modèle
 with open("recommendation_model.pkl", "rb") as f:
-    model = pickle.load(f)  # doit contenir un dict: user_id -> liste de movie_id
+    model = pickle.load(f)
 
-# Fonction pour obtenir les recommandations
-def get_recommendations(user_id, top_n=5):
-    # Récupérer les films recommandés par le modèle
-    recommended_ids = model.get(user_id, [])[:top_n]
-    
-    # Obtenir les titres correspondants
-    recommended_titles = data[data["movie_id"].isin(recommended_ids)]["movie_title"].unique()
-    return list(recommended_titles)
+# Charger les films (titre + id)
+movies = pd.read_csv("data.csv")
 
-# Page d'accueil
+def model_recommend(user_id, top_n=5):
+    """Renvoie une liste de movie_id recommandés pour user_id"""
+    # Exemple : suppose que model est un dictionnaire {user_id: [movie_id, ...]}
+    return model.get(user_id, [])[:top_n]
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# Endpoint pour récupérer les recommandations
 @app.route("/recommend", methods=["POST"])
 def recommend():
     user_id = int(request.json.get("user_id"))
-    recs = get_recommendations(user_id)
-    return jsonify({"recommendations": recs})
+    recommended_ids = model_recommend(user_id)
+    
+    if not recommended_ids:
+        return jsonify({"error": "No recommendations found"}), 404
+    
+    recs = movies[movies["movie_id"].isin(recommended_ids)][["movie_id", "movie_title"]].drop_duplicates()
+    return jsonify(recs.to_dict(orient="records"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
 
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
 
 
 
