@@ -1,38 +1,39 @@
-from flask import Flask, render_template, request, jsonify
-import pandas as pd
+from flask import Flask, request, jsonify
 import pickle
 
 app = Flask(__name__)
 
-# Charger le modèle
-with open("recommendation_model.pkl", "rb") as f:
+# Charger le modèle au démarrage
+with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
 
-# Charger les films (titre + id)
-movies = pd.read_csv("data.csv")
-
-def model_recommend(user_id, top_n=5):
-    """Renvoie une liste de movie_id recommandés pour user_id"""
-    # Exemple : suppose que model est un dictionnaire {user_id: [movie_id, ...]}
-    return model.get(user_id, [])[:top_n]
-
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template("index.html")
+    return "API de recommandation de films"
 
-@app.route("/recommend", methods=["POST"])
+@app.route('/recommend', methods=['POST'])
 def recommend():
-    user_id = int(request.json.get("user_id"))
-    recommended_ids = model_recommend(user_id)
-    
-    if not recommended_ids:
-        return jsonify({"error": "No recommendations found"}), 404
-    
-    recs = movies[movies["movie_id"].isin(recommended_ids)][["movie_id", "movie_title"]].drop_duplicates()
-    return jsonify(recs.to_dict(orient="records"))
+    try:
+        data = request.get_json()
+        # Adaptez selon votre modèle
+        user_id = data.get('user_id')
+        # Utilisez votre modèle pour générer des recommandations
+        recommendations = model.predict(user_id)  # Exemple
+        return jsonify({'recommendations': recommendations.tolist()})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
+```
+
+**`requirements.txt` :**
+```
+Flask==3.0.0
+pandas
+numpy
+scikit-learn
+gunicorn
 
 
 
